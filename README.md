@@ -2,8 +2,8 @@
 
 ### Goal as agreed on 10.10:
 Reproduce polarization distribution plots from
-http://arxiv.org/pdf/1403.1790v3.pdf
-http://arxiv.org/pdf/1503.07787v2.pdf
+  * http://arxiv.org/pdf/1403.1790v3.pdf
+  * http://arxiv.org/pdf/1503.07787v2.pdf
 
 Software
 ========
