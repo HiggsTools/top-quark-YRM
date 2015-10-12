@@ -1,0 +1,64 @@
+#!/bin/bash
+
+rootfile=root_v6.05.02.source.tar.gz
+rootweb=https://root.cern.ch/download/root_v6.05.02.source.tar.gz
+rootsrc=root-6.05.02
+
+echo "Downloading rooT ... "
+wget $rootweb
+mkdir $rootsrc
+tar xvfz $rootfile
+rm -i $rootfile
+
+echo "You need to instal certain software"
+echo "Do you want to run the following apt-get install commands? (tested on debian installation)"
+echo "Required: apt-get install git dpkg-dev make g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev"
+echo "Optional: apt-get install gfortran libssl-dev libpcre3-dev xlibmesa-glu-dev libglew1.5-dev libftgl-dev libmysqlclient-dev libfftw3-dev libcfitsio-dev graphviz-dev libavahi-compat-libdnssd-dev libldap2-dev python-dev libxml2-dev libkrb5-dev libgsl0-dev libqt4-dev"
+
+while true; do
+	read -p "Do you want to run the command? " yn
+	case $yn in
+			[Yy]*) sudo apt-get install git dpkg-dev make g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev gfortran libssl-dev libpcre3-dev xlibmesa-glu-dev libglew1.5-dev libftgl-dev libmysqlclient-dev libfftw3-dev libcfitsio-dev graphviz-dev libavahi-compat-libdnssd-dev libldap2-dev python-dev libxml2-dev libkrb5-dev libgsl0-dev libqt4-dev; break;;
+			[Nn]*) echo "Ok, but make sure you have at least the "required" packages installed in your system"; break;;
+			* ) echo "Please answer either yes or no.";;
+	esac
+done
+
+while true; do
+	echo "root will be installed in the folder root in this directory"
+	read -p "Is that ok with you? " yn
+	case $yn in
+		[Yy]*) roottarget=root; break;;
+		[Nn]*) read -p "Where do you want to install root? (please, give path relative to the current folder, this script will create the folder): " roottarget; break;;
+		* ) echo "Please, answer the question with y or n";;
+	esac
+done
+
+echo "TODO: CHECK WHETHER THE FOLDER ALREADY EXISTS"
+
+sourcerootfol=${PWD}/$rootsrc
+
+mkdir $roottarget
+cd $roottarget
+
+instalationfol=${PWD}
+
+echo "Compiling root ... "
+cmake $sourcerootfol
+cmake --build .
+echo "Needs root password to run the following command: cmake --build . --target install"
+su -c "cmake --build . --target install"
+
+cd $sourcerootfol/..
+echo "Removing the source directory: rm -RI "$rootsrc
+rm -RI $rootsrc
+
+echo "Do you want to source thisroot.sh every time you log in (1) or create an alias in .bashrc (2) .bash_aliases (3) for sourcethisroot?"
+read -p "Select option (1/2/recommended: 3): " seleccion
+	case $seleccion in
+		[1]*) echo "source "$instalationfol"/bin/thisroot.sh" >> ~/.bashrc;;
+		[2]*) echo "alias sourcethisroot=source "$instalationfol"/bin/thisroot.sh" >> ~/.bashrc;;
+		[3]*) echo "alias sourcethisroot=source "$instalationfol"/bin/thisroot.sh" >> ~/.bash_aliases;;
+	esac
+
+
