@@ -130,8 +130,8 @@ RP_220_s          220                   // distance of the RP to the IP, in mete
 RP_220_x          0.002                 // distance of the RP to the beam, in meters
 RP_420_s          420                   // distance of the RP to the IP, in meters
 RP_420_x          0.004                 // distance of the RP to the beam, in meters
-RP_beam1Card      DELPHESDIR/data/LHCB1IR5_v6.500.tfs // beam optics file, beam 1
-RP_beam2Card      DELPHESDIR/data/LHCB2IR5_v6.500.tfs // beam optics file, beam 2
+RP_beam1Card      /home/jumax9/Physics/Madgraph/Delphes/data/LHCB1IR5_v6.500.tfs // beam optics file, beam 1
+RP_beam2Card      /home/jumax9/Physics/Madgraph/Delphes/data/LHCB2IR5_v6.500.tfs // beam optics file, beam 2
 RP_IP_name        IP5			// tag for IP in Hector ; 'IP1' for ATLAS
 RP_offsetEl_x     0.097			// horizontal separation between both beam, in meters 
 RP_offsetEl_y     0                     // vertical separation between both beam, in meters
@@ -147,5 +147,5 @@ NEvents_Frog      100
 NEvents           -1                   // -1 means 'all'
 
 # input PDG tables
-PdgTableFilename  DELPHESDIR/data/particle.tbl     // table with particle pid,mass,charge,...
+PdgTableFilename  /home/jumax9/Physics/Madgraph/Delphes/data/particle.tbl     // table with particle pid,mass,charge,...
 

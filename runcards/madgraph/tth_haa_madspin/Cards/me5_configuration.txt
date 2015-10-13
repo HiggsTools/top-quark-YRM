@@ -29,8 +29,6 @@
 #! If None: try to find g77 or gfortran on the system
 #!
 # fortran_compiler = None
-# f2py_compiler = None 
-
 
 #! Prefered C++ Compiler
 #! If None: try to find g++ or clang on the system
@@ -91,19 +89,13 @@
 
 #! Cluster Type [pbs|sge|condor|lsf|ge|slurm|htcaas|htcaas2] Use for cluster run only
 #!  And cluster queue (or partition for slurm)
-#!  And size of the cluster (some part of the code can adapt splitting accordingly)
 # cluster_type = condor
 # cluster_queue = madgraph
-# cluster_size = 150 
 
-#! Path to a node directory to avoid direct writing on the central disk
-#!  Note that condor clusters avoid direct writing by default (therefore this
-#!  options does not affect condor clusters)
+#! Path to a node directory to avoid direct writting on the central disk
+#!  Note that condor cluster avoid direct writting by default (therefore this
+#!  options didn't modify condor cluster)
 # cluster_temp_path = None
-
-#! path to a node directory where local file can be found (typically pdf)
-#! to avoid to send them to the node (if cluster_temp_path is on True or condor)
-# cluster_local_path = /cvmfs/cp3.uclouvain.be/madgraph/
 
 #! Cluster waiting time for status update 
 #!  First number is when the number of waiting job is higher than the number 
@@ -187,7 +179,7 @@
 # amcfast = amcfast-config
 
 
-mg5_path = /Users/joosep/Documents/MG5_aMC_v2_3_2 
+mg5_path = /home/jumax9/Physics/Madgraph 
 
 # MG5 MAIN DIRECTORY
-mg5_path = /Users/joosep/Documents/MG5_aMC_v2_3_2
+mg5_path = /home/jumax9/Physics/Madgraph
