@@ -13,29 +13,38 @@ import os, sys
 import ROOT as r
 from ROOT import TTree, TFile, AddressOf, gROOT
 import numpy as np
+import gzip
 
 # Get the input lhe file
-if len(sys.argv) < 2:
-    print "\nYou must enter the .lhe file you wish to convert as the first arguement. Exiting \n"
+if len(sys.argv) < 3:
+    print "Run as python lhetools.py input.lhe output.root"
     sys.exit(1)
 
-try:    input_file = file( sys.argv[1], 'r')
-except:
-    print "\nThe entered file cannot be opened, please enter a vaild .lhe file. Exiting. \n"
+fn = sys.argv[1]
+ofn = sys.argv[2]
+
+try:
+    input_file = None
+    if fn.endswith("gz"):
+        input_file = gzip.open( sys.argv[1], 'r')
+    elif fn.endswith("lhe"):
+        input_file = file( sys.argv[1], 'r')
+    else:
+        raise Exception("Unknown file format.")
+except Exception as e:
+    print "\nThe entered file cannot be opened, please enter a valid .lhe (.lhe.gz) file. Exiting. \n"
+    print e
     sys.exit(1)
-    pass
 
-if len(sys.argv) > 2:    output_file_name = sys.argv[2]
-else:                    output_file_name = "lhe.root"
-
-try:    output_file = TFile(output_file_name, "RECREATE")
+try:
+    output_file = TFile(ofn, "RECREATE")
 except:
-    print "Cannot open output file named: " + output_file_name + "\nPlease enter a valid output file name as the 2nd arguement. Exiting"
+    print "Cannot open output file named: " + ofn + "\nPlease enter a valid output file name as the 2nd arguement. Exiting"
     sys.exit(1)
     pass
 
 output_tree = TTree("events", "events")
-print "Setup complete \nOpened file " + str(sys.argv[1]) + "  \nConverting to .root format and outputing to " + output_file_name
+print "Setup complete \nOpened file " + str(fn) + "  \nConverting to .root format and outputing to " + ofn
 
 NMAX = 100
 # Setup output branches
