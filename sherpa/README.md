@@ -17,3 +17,11 @@ $ make
 $ make install
 ~~~
 
+Plots
+=====
+
+Run:
+~~~
+make plots
+~~~
+
