@@ -33,6 +33,7 @@ $(BACKGROUND):
 
 clean:
 	rm -f Rivet_$(SIGNAL_ANALYSIS).so
+	rm -f Rivet_$(BACKGROUND_ANALYSIS).so
 	rm -f Rivet.yoda
 	rm -f Sherpa_References.tex
 
