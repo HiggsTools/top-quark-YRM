@@ -9,6 +9,6 @@ sherpa/MPI_Cross_Sections.dat
 sherpa/Results.db
 sherpa/Results.db.bak
 sherpa/Rivet.yoda
-sherpa/Rivet_HIGGSTOOLS_2015_I1.so
+sherpa/*.so
 sherpa/plots/
 sherpa/tth_yy.hepmc2g
