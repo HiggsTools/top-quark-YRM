@@ -1,4 +1,4 @@
-# top-quark-YRM
+# Sherpa Signal & Background Validation
 
 Software
 ========
@@ -17,11 +17,26 @@ $ make
 $ make install
 ~~~
 
+Analysis
+========
+
+Our analysis is performed using rivet. We consider the tree level processes:
+* pp -> t tb (H -> y y) __(Signal)__
+* pp -> t tb y y __(Background)__
+
+To alter the distributions produced edit __HIGGSTOOLS_2015_I1.cc__. 
+The default analysis produces the following distributions:
+* __TODO__
+
 Plots
 =====
 
+First edit the Makefile to ensure the path to Sherpa and Rivet is correct.
+
 Run:
 ~~~
-make plots
+$ make plots
 ~~~
+
+Output can be viewed in a browser by navigating to  plots/index.html
 

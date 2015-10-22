@@ -1,5 +1,14 @@
+# sherpa output
 sherpa/Process/
 sherpa/Results/
 sherpa/NTuplesFiles/
 sherpa/Sherpa_References.tex
 sherpa/Status*
+sherpa/MIG_P+P+_14000_NNPDF_2.db
+sherpa/MPI_Cross_Sections.dat
+sherpa/Results.db
+sherpa/Results.db.bak
+sherpa/Rivet.yoda
+sherpa/Rivet_HIGGSTOOLS_2015_I1.so
+sherpa/plots/
+sherpa/tth_yy.hepmc2g
