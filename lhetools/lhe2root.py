@@ -100,7 +100,7 @@ for line in input_file:
         in_ev = 1
         continue
     
-    if line.strip().startswith("<event>"):
+    if line.strip().startswith("<event"):
         in_ev_1 = 1
         continue
     
