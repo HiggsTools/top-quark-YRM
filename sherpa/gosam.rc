@@ -1,0 +1,20 @@
+# Copy this file to setup.in in order to set
+# some common options for all examples.
+
+###################
+# physics options #
+###################
+
+model=smdiag
+ 
+zero=mU,mD,mC,mS,mB,wB,wT
+one=gs,e
+
+symmetries=family,generation
+
+filter.nlo=lambda d: (not (d.isScaleless())) 
+
+PSP_check=True
+PSP_rescue=True
+PSP_verbosity=True
+

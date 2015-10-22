@@ -1,0 +1,24 @@
+# OLE_order.lh
+# Created by Sherpa-2.2.0
+
+MatrixElementSquareType  CHsummed
+CorrectionType           QCD
+IRregularisation         CDR
+AlphasPower              2
+AlphaPower               2
+OperationMode            CouplingsStrippedOff
+ResonanceTreatment       FixedWidthScheme
+EWRenormalisationScheme  alphaMZ
+
+# process list
+1 -1 -> 22 22 6 -6
+-1 1 -> 22 22 6 -6
+2 -2 -> 22 22 6 -6
+-2 2 -> 22 22 6 -6
+3 -3 -> 22 22 6 -6
+-3 3 -> 22 22 6 -6
+4 -4 -> 22 22 6 -6
+-4 4 -> 22 22 6 -6
+5 -5 -> 22 22 6 -6
+-5 5 -> 22 22 6 -6
+21 21 -> 22 22 6 -6
