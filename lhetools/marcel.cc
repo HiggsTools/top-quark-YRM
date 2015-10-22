@@ -101,7 +101,7 @@ bool doMPI  = true;
 
   
 // Generator
- Pythia pythia("/home/mello/physics_programs/pythia_installation/xmldoc");
+ Pythia pythia("/home/mello/physics_programs/Pythia_installation/xmldoc");
 
 
 TNtuple *nt = new TNtuple("ntuple","ntuple","Tpt:Trap:Tphi:Tm:Te:Hpt:Hrap:Hphi:Hm:He");

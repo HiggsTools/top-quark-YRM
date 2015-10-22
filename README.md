@@ -1,5 +1,11 @@
 # top-quark-YRM
 
+### Goal as agreed on 10.10:
+Reproduce polarization distribution plots from
+  * http://arxiv.org/pdf/1403.1790v3.pdf
+  * http://arxiv.org/pdf/1503.07787v2.pdf
+
+
 Software
 ========
 
@@ -48,12 +54,19 @@ MG5_aMC> launch
 MG5_aMC> *** manually select MadSpin (4) and pythia (1), type "done"
 ~~~
 
+**TODO**: figure out hadronization & detector simulation.
+
 The LHE output will be in `runcards/madgraph/tth_haa_madspin//Events/run_01_decayed_1/tag_1_pythia_events.lhe.gz`
 
 Unpack with
 ~~~
 $ gzip -d runcards/madgraph/tth_haa_madspin//Events/run_01_decayed_1/tag_1_pythia_events.lhe.gz
 ~~~
+
+## runcards/madgraph/ttgammagamma
+
+**TODO**.
+
 
 LHE tools
 =========
@@ -70,11 +83,13 @@ $ du -csh lhe.root
 8.7M	lhe.root
 ~~~
 
-Analysis tools
+# Analysis tools
 
 ## analysis/lheanalysis.py
 
 Run as `python analysis/lheanalysis.py file.root`. Will loop over all particles and print out the decay chain.
+
+**TODO**: add simple reconstruction example.
 
 Here is one event, commented.
 ~~~
