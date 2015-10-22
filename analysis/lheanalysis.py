@@ -1,5 +1,6 @@
 import ROOT, sys
 import math
+import numpy as np
 
 inf = ROOT.TFile(sys.argv[1])
 tree = inf.Get("events")
@@ -62,10 +63,33 @@ out=ROOT.TFile("analysis.root","recreate")
 
 #Histograms
 Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
+hleps = ROOT.TH1D("LepId", "LepId", 20, 0, 20)
+hlep1pt = ROOT.TH1D("Lep1Pt", "First lepton pt", 20, 0, 300)
+hlep2pt = ROOT.TH1D("Lep2Pt", "second lepton pt", 20, 0, 300)
+hlepdr = ROOT.TH1D("LepDr", "lepton dr", 20, 0, 5)
 
 
+outree = ROOT.TTree("events", "events")
+arr_cosl1l2 = np.zeros(1, "d")
+arr_lep1_pt = np.zeros(1, "d")
+arr_lep2_pt = np.zeros(1, "d")
+arr_top1_pt = np.zeros(1, "d")
+arr_top2_pt = np.zeros(1, "d")
+arr_lep1_pt_frame2 = np.zeros(1, "d")
+arr_lep2_pt_frame2 = np.zeros(1, "d")
+
+outree.Branch("cosl1l2", arr_cosl1l2, "cosl1l2/D")
+outree.Branch("lep1_pt_frame2", arr_lep1_pt_frame2, "lep1_pt_frame2/D")
+outree.Branch("lep2_pt_frame2", arr_lep2_pt_frame2, "lep2_pt_frame2/D")
+outree.Branch("lep1_pt", arr_lep1_pt, "lep1_pt/D")
+outree.Branch("lep2_pt", arr_lep2_pt, "lep2_pt/D")
+outree.Branch("top1_pt", arr_top1_pt, "top1_pt/D")
+outree.Branch("top2_pt", arr_top2_pt, "top2_pt/D")
 
 for iev in range(tree.GetEntries()):
+#for iev in range(10000):
+    if iev%1000==0:
+        print "event", iev
     nb += tree.GetEntry(iev)
     nparticles = tree.n_particles
 
@@ -107,74 +131,103 @@ for iev in range(tree.GetEntries()):
     gamma1=ROOT.TLorentzVector()
     gamma2=ROOT.TLorentzVector()
 
+    top1 = None
+    top2 = None
 
-    for p in particles:
+    for np, p in enumerate(particles):
         if abs(p.id) is 22:
-            if gamma1.Mag() !=0:
+            if gamma1.Mag() == 0:
                 gamma1.SetPx(p.px)
                 gamma1.SetPy(p.py)
                 gamma1.SetPz(p.pz)
                 gamma1.SetE(p.e)
-                if gamma1.Pt() <= 20:
-                    continue
-                if gamma1.Eta() > 2.5:
-                    continue
-
-        else:
+                if gamma1.Pt() <= 20 or gamma1.Eta() > 2.5:
+                    break
+            else:
                 gamma2.SetPx(p.px)
                 gamma2.SetPy(p.py)
                 gamma2.SetPz(p.pz)
                 gamma2.SetE(p.e)
-                if gamma2.Pt() <= 20:
-                    continue
-                if gamma2.Eta() > 2.5:
-                    continue
-            
+                if gamma2.Pt() <= 20 or gamma2.Eta() > 2.5:
+                    break
         
         
-        if abs(p.id) in [11,13]:
+        if abs(p.id) in [11, 13]:
+            hleps.Fill(p.id)
+            #print np, p.id
             mothers=p.mothers
             for mother in mothers:
                 if 24 is abs(mother.id):
+                    #print "found W as mother"
                     Wmothers=mother.mothers
                     for Wmother in Wmothers:
                         if 6 is abs(Wmother.id):
+                            #print "found top as mother"``
+                            #lepton
                             l=ROOT.TLorentzVector()
                             l.SetPx(p.px)
                             l.SetPy(p.py)
                             l.SetPz(p.pz)
                             l.SetE(p.e)
-                            
+
+                            #top that is the mother of lepton
                             Mother=ROOT.TLorentzVector()
                             Mother.SetPx(Wmother.px)
                             Mother.SetPy(Wmother.py)
                             Mother.SetPz(Wmother.pz)
                             Mother.SetE(Wmother.e)
 
-                            l.Boost(Mother.BoostVector())
                             if p.id > 0:
                                 l1=l
+                                top1 = Mother
+                                arr_lep1_pt[0] = l1.Pt()
+                                arr_top1_pt[0] = Mother.Pt()
                             else:
                                 l2=l
+                                top2 = Mother
+                                arr_lep2_pt[0] = l2.Pt()
+                                arr_top2_pt[0] = Mother.Pt()
 
+                            #print Mother.Px(), Mother.BoostVector().Px(), Mother.E()
+                            l.Boost(-Mother.BoostVector())
+                            #Mother.Boost(-Mother.BoostVector())
+                            #print "boosted mother", Mother.Px(), Mother.Py(), Mother.Pz()
 
     
+    if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0:
+        continue #next event
 
-    if gamma1.DeltaR(gamma2) < 0.4:
+
+    toppair = top1 + top2
+    
+    # if gamma1.DeltaR(gamma2) < 0.4:
+    #     continue
+    # if (gamma1+gamma2).M() < 123 or (gamma1+gamma2).M() > 129:
+    #     continue
+    # if l1.DeltaR(l2) < 0.4:
+    #     continue
+    if l1.Pt() < 10 or l2.Pt() < 10:
+       continue
+    if abs(l1.Eta()) > 2.5 or abs(l2.Eta())>2.5:
         continue
-    if (gamma1+gamma2).M() < 123 and (gamma1+gamma2).M() > 129:
-        continue
-    if l1.DeltaR(l2) < 0.4:
-        continue
-    #if l1.Pt() < 5 or l2.Pt() < 5:
-    #    continue
+    hlep1pt.Fill(l1.Pt())
+    hlep2pt.Fill(l2.Pt())
 
+    hlepdr.Fill(l1.DeltaR(l2))
 
+    #print "l1", l1.Pt(), l1.Eta(), l1.Phi(), l1.M()
+    #print "l2", l2.Pt(), l2.Eta(), l2.Phi(), l2.M()
 
-    Cosl1l2.Fill(math.cos(l1.Angle(l2.Vect())))
+    cosl1l2 = math.cos(l1.Angle(l2.Vect()))
+    Cosl1l2.Fill(cosl1l2)
 
+    arr_cosl1l2[0] = cosl1l2
+    arr_lep1_pt_frame2[0] = l1.Pt()
+    arr_lep2_pt_frame2[0] = l2.Pt()
+    outree.Fill()
 
     nproc += 1
 out.Write()
+
 
 print "processed {0} entries, read {1:.2f} Mb".format(nproc, nb/1024.0/1024.0)
