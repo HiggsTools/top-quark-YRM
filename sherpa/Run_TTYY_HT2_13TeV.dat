@@ -2,7 +2,7 @@
   % general settings
   $RUNNAME:=TTYY_HT2_13TeV
   $BENERGY:=6500;
-  EVENTS 5M; ERROR 0.05;
+  EVENTS 100; ERROR 0.5;
   RANDOM_SEED $RNDSEED1 $RNDSEED2;
   BATCH_MODE=2;
 
@@ -26,7 +26,7 @@
 
   % tags and settings for ME generators
   $DIPAL:=0.03;
-  $NLOPART:=BVIRS;
+  $NLOPART:=B;
   $LOOPGEN:=LHOLE;
   ME_SIGNAL_GENERATOR   Comix $LOOPGEN;
   EVENT_GENERATION_MODE Weighted;
@@ -60,7 +60,8 @@
   # To be completed
   % NTuple output
   EVT_FILE_PATH NTuplesFiles
-  EVENT_OUTPUT Root[H$NJETSj_$RUNNAME_$NLOPART_$BENERGY_pt$QCUT_eta$ETACUT_r$RNDSEED1_$RNDSEED2];
+  % EVENT_OUTPUT Root[H$NJETSj_$RUNNAME_$NLOPART_$BENERGY_pt$QCUT_eta$ETACUT_r$RNDSEED1_$RNDSEED2];
+  EVENT_OUTPUT LHEF[test];
 
   % PDF settings
   % Sherpa internal:
