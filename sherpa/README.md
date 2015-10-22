@@ -8,7 +8,7 @@ Install the following prerequisites:
 * LHAPDF
 * root
 
-install sherpa with:
+Install sherpa v2.2.0 with:
 ~~~
 $ svn co http://sherpa.hepforge.org/svn/branches/rel-2-2-0
 $ cd rel-2-2-0
@@ -21,8 +21,8 @@ Analysis
 ========
 
 Our analysis is performed using rivet. We consider the tree level processes:
-* pp -> t tb (H -> y y) __(Signal)__
-* pp -> t tb y y __(Background)__
+* pp > t t~ (H > y y) __(Signal)__
+* pp > t t~ y y __(Background)__
 
 To alter the distributions produced edit __HIGGSTOOLS_2015_I1.cc__. 
 The default analysis produces the following distributions:
