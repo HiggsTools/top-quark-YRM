@@ -1,4 +1,5 @@
 import ROOT, sys
+import math
 
 inf = ROOT.TFile(sys.argv[1])
 tree = inf.Get("events")
@@ -55,6 +56,15 @@ class Particle:
 
 nb = 0
 nproc = 0
+
+out=ROOT.TFile("analysis.root","recreate")
+
+
+#Histograms
+Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
+
+
+
 for iev in range(tree.GetEntries()):
     nb += tree.GetEntry(iev)
     nparticles = tree.n_particles
@@ -91,9 +101,80 @@ for iev in range(tree.GetEntries()):
         elif part.status == 2:
             particles_s2 += [part]
     
-    print "---"
+    #print "---"
+    l1=ROOT.TLorentzVector()
+    l2=ROOT.TLorentzVector()
+    gamma1=ROOT.TLorentzVector()
+    gamma2=ROOT.TLorentzVector()
+
+
     for p in particles:
-        print str(p)
+        if abs(p.id) is 22:
+            if gamma1.Mag() !=0:
+                gamma1.SetPx(p.px)
+                gamma1.SetPy(p.py)
+                gamma1.SetPz(p.pz)
+                gamma1.SetE(p.e)
+                if gamma1.Pt() <= 20:
+                    continue
+                if gamma1.Eta() > 2.5:
+                    continue
+
+        else:
+                gamma2.SetPx(p.px)
+                gamma2.SetPy(p.py)
+                gamma2.SetPz(p.pz)
+                gamma2.SetE(p.e)
+                if gamma2.Pt() <= 20:
+                    continue
+                if gamma2.Eta() > 2.5:
+                    continue
+            
+        
+        
+        if abs(p.id) in [11,13]:
+            mothers=p.mothers
+            for mother in mothers:
+                if 24 is abs(mother.id):
+                    Wmothers=mother.mothers
+                    for Wmother in Wmothers:
+                        if 6 is abs(Wmother.id):
+                            l=ROOT.TLorentzVector()
+                            l.SetPx(p.px)
+                            l.SetPy(p.py)
+                            l.SetPz(p.pz)
+                            l.SetE(p.e)
+                            
+                            Mother=ROOT.TLorentzVector()
+                            Mother.SetPx(Wmother.px)
+                            Mother.SetPy(Wmother.py)
+                            Mother.SetPz(Wmother.pz)
+                            Mother.SetE(Wmother.e)
+
+                            l.Boost(Mother.BoostVector())
+                            if p.id > 0:
+                                l1=l
+                            else:
+                                l2=l
+
+
+    
+
+    if gamma1.DeltaR(gamma2) < 0.4:
+        continue
+    if (gamma1+gamma2).M() < 123 and (gamma1+gamma2).M() > 129:
+        continue
+    if l1.DeltaR(l2) < 0.4:
+        continue
+    #if l1.Pt() < 5 or l2.Pt() < 5:
+    #    continue
+
+
+
+    Cosl1l2.Fill(math.cos(l1.Angle(l2.Vect())))
+
+
     nproc += 1
+out.Write()
 
 print "processed {0} entries, read {1:.2f} Mb".format(nproc, nb/1024.0/1024.0)
