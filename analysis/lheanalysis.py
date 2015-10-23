@@ -1,6 +1,7 @@
 import ROOT, sys
 import math
 import numpy as np
+import copy
 
 inf = ROOT.TFile(sys.argv[1])
 tree = inf.Get("events")
@@ -58,11 +59,13 @@ class Particle:
 nb = 0
 nproc = 0
 
-out=ROOT.TFile("analysis.root","recreate")
+out=ROOT.TFile(sys.argv[2],"recreate")
 
 
 #Histograms
 Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
+Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta", 20,-1,1)
+
 hleps = ROOT.TH1D("LepId", "LepId", 20, 0, 20)
 hlep1pt = ROOT.TH1D("Lep1Pt", "First lepton pt", 20, 0, 300)
 hlep2pt = ROOT.TH1D("Lep2Pt", "second lepton pt", 20, 0, 300)
@@ -71,6 +74,7 @@ hlepdr = ROOT.TH1D("LepDr", "lepton dr", 20, 0, 5)
 
 outree = ROOT.TTree("events", "events")
 arr_cosl1l2 = np.zeros(1, "d")
+arr_cosl1l2_frame2 = np.zeros(1, "d")
 arr_lep1_pt = np.zeros(1, "d")
 arr_lep2_pt = np.zeros(1, "d")
 arr_top1_pt = np.zeros(1, "d")
@@ -79,6 +83,7 @@ arr_lep1_pt_frame2 = np.zeros(1, "d")
 arr_lep2_pt_frame2 = np.zeros(1, "d")
 
 outree.Branch("cosl1l2", arr_cosl1l2, "cosl1l2/D")
+outree.Branch("cosl1l2_frame2", arr_cosl1l2_frame2, "cosl1l2_frame2/D")
 outree.Branch("lep1_pt_frame2", arr_lep1_pt_frame2, "lep1_pt_frame2/D")
 outree.Branch("lep2_pt_frame2", arr_lep2_pt_frame2, "lep2_pt_frame2/D")
 outree.Branch("lep1_pt", arr_lep1_pt, "lep1_pt/D")
@@ -86,8 +91,8 @@ outree.Branch("lep2_pt", arr_lep2_pt, "lep2_pt/D")
 outree.Branch("top1_pt", arr_top1_pt, "top1_pt/D")
 outree.Branch("top2_pt", arr_top2_pt, "top2_pt/D")
 
-for iev in range(tree.GetEntries()):
-#for iev in range(10000):
+#for iev in range(tree.GetEntries()):
+for iev in range(50000):
     if iev%1000==0:
         print "event", iev
     nb += tree.GetEntry(iev)
@@ -178,27 +183,38 @@ for iev in range(tree.GetEntries()):
                             Mother.SetE(Wmother.e)
 
                             if p.id > 0:
-                                l1=l
+                                l1=copy.deepcopy(l)
                                 top1 = Mother
                                 arr_lep1_pt[0] = l1.Pt()
                                 arr_top1_pt[0] = Mother.Pt()
                             else:
-                                l2=l
+                                l2=copy.deepcopy(l)
                                 top2 = Mother
                                 arr_lep2_pt[0] = l2.Pt()
                                 arr_top2_pt[0] = Mother.Pt()
-
-                            #print Mother.Px(), Mother.BoostVector().Px(), Mother.E()
-                            l.Boost(-Mother.BoostVector())
-                            #Mother.Boost(-Mother.BoostVector())
-                            #print "boosted mother", Mother.Px(), Mother.Py(), Mother.Pz()
 
     
     if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0:
         continue #next event
 
-
     toppair = top1 + top2
+    
+    #print (l1-l2).Mag()
+
+    l1_frame1 = ROOT.TLorentzVector(l1)
+    l2_frame1 = ROOT.TLorentzVector(l2)
+
+    l1_frame1.Boost(-toppair.BoostVector())
+    l2_frame1.Boost(-toppair.BoostVector())
+
+    l1_frame1.Boost(-top1.BoostVector())
+    l2_frame1.Boost(-top2.BoostVector())
+
+    l1_frame2 = ROOT.TLorentzVector(l1)
+    l1_frame2.Boost(-top1.BoostVector())
+
+    l2_frame2 = ROOT.TLorentzVector(l2)
+    l2_frame2.Boost(-top2.BoostVector())
     
     # if gamma1.DeltaR(gamma2) < 0.4:
     #     continue
@@ -218,10 +234,16 @@ for iev in range(tree.GetEntries()):
     #print "l1", l1.Pt(), l1.Eta(), l1.Phi(), l1.M()
     #print "l2", l2.Pt(), l2.Eta(), l2.Phi(), l2.M()
 
-    cosl1l2 = math.cos(l1.Angle(l2.Vect()))
+    cosl1l2 = math.cos(l1_frame1.Angle(l2_frame1.Vect()))
     Cosl1l2.Fill(cosl1l2)
 
+    cosl1l2_frame2 = math.cos(l1_frame2.Angle(l2_frame2.Vect()))
+    Cosl1l2_frame2.Fill(cosl1l2_frame2)
+    #print cosl1l2, cosl1l2_frame2
+
     arr_cosl1l2[0] = cosl1l2
+    arr_cosl1l2_frame2[0] = cosl1l2_frame2
+
     arr_lep1_pt_frame2[0] = l1.Pt()
     arr_lep2_pt_frame2[0] = l2.Pt()
     outree.Fill()
