@@ -66,6 +66,12 @@ out=ROOT.TFile(sys.argv[2],"recreate")
 Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
 Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta", 20,-1,1)
 
+Etal_LabFrame=ROOT.TH1D("Etal_LabFrame","#Eta_{l} in LabFrame", 24, 0,3)
+Etab_LabFrame=ROOT.TH1D("Etab_LabFrame","#Eta_{b} in LabFrame", 24, 0,3)
+Cosl1l2_LabFrame=ROOT.TH1D("Cosl1l2_LabFrame","#Cos_{ll} in LabFrame", 24, 0,3)
+Cosb1b2_LabFrame=ROOT.TH1D("Cosb1b2_LabFrame","#Cos_{bb} in LabFrame", 24, 0,3)
+
+
 hleps = ROOT.TH1D("LepId", "LepId", 20, 0, 20)
 hlep1pt = ROOT.TH1D("Lep1Pt", "First lepton pt", 20, 0, 300)
 hlep2pt = ROOT.TH1D("Lep2Pt", "second lepton pt", 20, 0, 300)
@@ -135,6 +141,10 @@ for iev in range(50000):
     l2=ROOT.TLorentzVector()
     gamma1=ROOT.TLorentzVector()
     gamma2=ROOT.TLorentzVector()
+    b1=ROOT.TLorentzVector()
+    b2=ROOT.TLorentzVector()
+
+    
 
     top1 = None
     top2 = None
@@ -192,9 +202,23 @@ for iev in range(50000):
                                 top2 = Mother
                                 arr_lep2_pt[0] = l2.Pt()
                                 arr_top2_pt[0] = Mother.Pt()
+        if 5 is abs(p.id):
+            mothers=p.mothers
+            for mother in mothers:
+                    if 6 is abs(mother.id):
+                        b=ROOT.TLorentzVector()
+                        b.SetPx(p.px)
+                        b.SetPy(p.py)
+                        b.SetPz(p.pz)
+                        b.SetE(p.e)
+                   
+                        if p.id > 0:
+                            b1=copy.deepcopy(b)
+                        else:
+                            b2=copy.deepcopy(b)
 
-    
-    if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0:
+
+    if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0 or b1.Mag() == 0 or b2.Mag() == 0:
         continue #next event
 
     toppair = top1 + top2
@@ -216,6 +240,12 @@ for iev in range(50000):
     l2_frame2 = ROOT.TLorentzVector(l2)
     l2_frame2.Boost(-top2.BoostVector())
     
+    b1_LabFrame = ROOT.TLorentzVector(b1)
+    b2_LabFrame = ROOT.TLorentzVector(b2)
+
+    l1_LabFrame = ROOT.TLorentzVector(l1)
+    l2_LabFrame = ROOT.TLorentzVector(l2)
+
     # if gamma1.DeltaR(gamma2) < 0.4:
     #     continue
     # if (gamma1+gamma2).M() < 123 or (gamma1+gamma2).M() > 129:
@@ -239,6 +269,17 @@ for iev in range(50000):
 
     cosl1l2_frame2 = math.cos(l1_frame2.Angle(l2_frame2.Vect()))
     Cosl1l2_frame2.Fill(cosl1l2_frame2)
+    
+    Etal_LabFrame.Fill(abs(l1.Eta()-l2.Eta()))
+    Etab_LabFrame.Fill(abs(b1.Eta()-b2.Eta()))
+   
+    cosl1l2_LabFrame = math.cos(l1_LabFrame.Angle(l2_LabFrame.Vect()))
+    Cosl1l2_LabFrame.Fill(cosl1l2_LabFrame)
+
+    cosb1b2_LabFrame = math.cos(b1_LabFrame.Angle(b2_LabFrame.Vect()))
+    Cosb1b2_LabFrame.Fill(cosb1b2_LabFrame)
+
+
     #print cosl1l2, cosl1l2_frame2
 
     arr_cosl1l2[0] = cosl1l2
