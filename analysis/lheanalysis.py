@@ -6,8 +6,6 @@ import copy
 inf = ROOT.TFile(sys.argv[1])
 tree = inf.Get("events")
 
-tree.Print("ALL")
-
 pdgIdMap = {
     1: "d",
     2: "u",
@@ -112,10 +110,10 @@ outree.Branch("etal_lab", arr_etal_lab, "etal_lab/D")
 outree.Branch("etab_lab", arr_etab_lab, "etab_lab/D")
 
 outree.Branch("dilep_m", arr_dilep_m, "dilep_m/D")
-
+print "Tree has", tree.GetEntries(), "entries"
 #for iev in range(tree.GetEntries()):
 for iev in range(min(50000, tree.GetEntries())):
-    if iev%1000==0:
+    if iev%10000==0:
         print "event", iev
     nb += tree.GetEntry(iev)
     nparticles = tree.n_particles
