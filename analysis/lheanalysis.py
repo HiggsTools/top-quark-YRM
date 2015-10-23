@@ -63,10 +63,13 @@ out=ROOT.TFile(sys.argv[2],"recreate")
 
 
 #Histograms
-Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
-Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta", 20,-1,1)
+Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta frame 1 (ttbar)", 20,-1,1)
+Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta frame2", 20,-1,1)
+Cosl1l2_lab = ROOT.TH1D("Cosl1l2_lab", "CosTheta lab", 20,-1,1)
 
 hleps = ROOT.TH1D("LepId", "LepId", 20, 0, 20)
+hnleps = ROOT.TH1D("nLep", "number of leptons", 5, 0, 5)
+
 hlep1pt = ROOT.TH1D("Lep1Pt", "First lepton pt", 20, 0, 300)
 hlep2pt = ROOT.TH1D("Lep2Pt", "second lepton pt", 20, 0, 300)
 hlepdr = ROOT.TH1D("LepDr", "lepton dr", 20, 0, 5)
@@ -82,6 +85,9 @@ arr_top2_pt = np.zeros(1, "d")
 arr_lep1_pt_frame2 = np.zeros(1, "d")
 arr_lep2_pt_frame2 = np.zeros(1, "d")
 
+arr_dilep_m = np.zeros(1, "d")
+
+
 outree.Branch("cosl1l2", arr_cosl1l2, "cosl1l2/D")
 outree.Branch("cosl1l2_frame2", arr_cosl1l2_frame2, "cosl1l2_frame2/D")
 outree.Branch("lep1_pt_frame2", arr_lep1_pt_frame2, "lep1_pt_frame2/D")
@@ -91,8 +97,10 @@ outree.Branch("lep2_pt", arr_lep2_pt, "lep2_pt/D")
 outree.Branch("top1_pt", arr_top1_pt, "top1_pt/D")
 outree.Branch("top2_pt", arr_top2_pt, "top2_pt/D")
 
+outree.Branch("dilep_m", arr_dilep_m, "dilep_m/D")
+
 #for iev in range(tree.GetEntries()):
-for iev in range(50000):
+for iev in range(min(50000, tree.GetEntries())):
     if iev%1000==0:
         print "event", iev
     nb += tree.GetEntry(iev)
@@ -138,6 +146,8 @@ for iev in range(50000):
 
     top1 = None
     top2 = None
+    
+    nlep = 0
 
     for np, p in enumerate(particles):
         if abs(p.id) is 22:
@@ -156,10 +166,10 @@ for iev in range(50000):
                 if gamma2.Pt() <= 20 or gamma2.Eta() > 2.5:
                     break
         
-        
         if abs(p.id) in [11, 13]:
             hleps.Fill(p.id)
-            #print np, p.id
+            nlep += 1
+            #print np, p.id, 
             mothers=p.mothers
             for mother in mothers:
                 if 24 is abs(mother.id):
@@ -167,7 +177,7 @@ for iev in range(50000):
                     Wmothers=mother.mothers
                     for Wmother in Wmothers:
                         if 6 is abs(Wmother.id):
-                            #print "found top as mother"``
+                            #print "found top as mother"
                             #lepton
                             l=ROOT.TLorentzVector()
                             l.SetPx(p.px)
@@ -197,6 +207,8 @@ for iev in range(50000):
     if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0:
         continue #next event
 
+    hnleps.Fill(nlep)
+    #print l1.Pt(), l2.Pt()
     toppair = top1 + top2
     
     #print (l1-l2).Mag()
@@ -239,6 +251,10 @@ for iev in range(50000):
 
     cosl1l2_frame2 = math.cos(l1_frame2.Angle(l2_frame2.Vect()))
     Cosl1l2_frame2.Fill(cosl1l2_frame2)
+    
+    cosl1l2_lab = math.cos(l1.Angle(l2.Vect()))
+    Cosl1l2_lab.Fill(cosl1l2_lab)
+
     #print cosl1l2, cosl1l2_frame2
 
     arr_cosl1l2[0] = cosl1l2
@@ -247,7 +263,9 @@ for iev in range(50000):
     arr_lep1_pt_frame2[0] = l1.Pt()
     arr_lep2_pt_frame2[0] = l2.Pt()
     outree.Fill()
-
+    
+    dilep = l1 + l2
+    arr_dilep_m[0] = dilep.M()
     nproc += 1
 out.Write()
 
