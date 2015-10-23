@@ -63,16 +63,19 @@ out=ROOT.TFile(sys.argv[2],"recreate")
 
 
 #Histograms
-Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta", 20,-1,1)
-Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta", 20,-1,1)
+Cosl1l2=ROOT.TH1D("Cosl1l2", "CosTheta frame 1 (ttbar)", 20,-1,1)
+Cosl1l2_frame2=ROOT.TH1D("Cosl1l2Frame2", "CosTheta frame2", 20,-1,1)
+Cosl1l2_lab = ROOT.TH1D("Cosl1l2_lab", "CosTheta lab", 20,-1,1)
 
-Etal_LabFrame=ROOT.TH1D("Etal_LabFrame","#Eta_{l} in LabFrame", 24, 0,3)
-Etab_LabFrame=ROOT.TH1D("Etab_LabFrame","#Eta_{b} in LabFrame", 24, 0,3)
-Cosl1l2_LabFrame=ROOT.TH1D("Cosl1l2_LabFrame","#Cos_{ll} in LabFrame", 24, 0,3)
-Cosb1b2_LabFrame=ROOT.TH1D("Cosb1b2_LabFrame","#Cos_{bb} in LabFrame", 24, 0,3)
+Etal_lab=ROOT.TH1D("Etal_LabFrame","#Eta_{l} in LabFrame", 24, 0,3)
+Etab_lab=ROOT.TH1D("Etab_LabFrame","#Eta_{b} in LabFrame", 24, 0,3)
+
+Cosb1b2_lab=ROOT.TH1D("Cosb1b2_LabFrame","#Cos_{bb} in LabFrame", 24, 0,3)
 
 
 hleps = ROOT.TH1D("LepId", "LepId", 20, 0, 20)
+hnleps = ROOT.TH1D("nLep", "number of leptons", 5, 0, 5)
+
 hlep1pt = ROOT.TH1D("Lep1Pt", "First lepton pt", 20, 0, 300)
 hlep2pt = ROOT.TH1D("Lep2Pt", "second lepton pt", 20, 0, 300)
 hlepdr = ROOT.TH1D("LepDr", "lepton dr", 20, 0, 5)
@@ -88,6 +91,13 @@ arr_top2_pt = np.zeros(1, "d")
 arr_lep1_pt_frame2 = np.zeros(1, "d")
 arr_lep2_pt_frame2 = np.zeros(1, "d")
 
+arr_cosb1b2_lab = np.zeros(1,"d")
+arr_etal_lab = np.zeros(1,"d")
+arr_etab_lab  = np.zeros(1,"d")
+
+arr_dilep_m = np.zeros(1, "d")
+
+
 outree.Branch("cosl1l2", arr_cosl1l2, "cosl1l2/D")
 outree.Branch("cosl1l2_frame2", arr_cosl1l2_frame2, "cosl1l2_frame2/D")
 outree.Branch("lep1_pt_frame2", arr_lep1_pt_frame2, "lep1_pt_frame2/D")
@@ -97,8 +107,14 @@ outree.Branch("lep2_pt", arr_lep2_pt, "lep2_pt/D")
 outree.Branch("top1_pt", arr_top1_pt, "top1_pt/D")
 outree.Branch("top2_pt", arr_top2_pt, "top2_pt/D")
 
+outree.Branch("cosb1b2_lab", arr_cosb1b2_lab, "cosb1b2_lab/D")
+outree.Branch("etal_lab", arr_etal_lab, "etal_lab/D")
+outree.Branch("etab_lab", arr_etab_lab, "etab_lab/D")
+
+outree.Branch("dilep_m", arr_dilep_m, "dilep_m/D")
+
 #for iev in range(tree.GetEntries()):
-for iev in range(50000):
+for iev in range(min(50000, tree.GetEntries())):
     if iev%1000==0:
         print "event", iev
     nb += tree.GetEntry(iev)
@@ -148,6 +164,8 @@ for iev in range(50000):
 
     top1 = None
     top2 = None
+    
+    nlep = 0
 
     for np, p in enumerate(particles):
         if abs(p.id) is 22:
@@ -166,10 +184,10 @@ for iev in range(50000):
                 if gamma2.Pt() <= 20 or gamma2.Eta() > 2.5:
                     break
         
-        
         if abs(p.id) in [11, 13]:
             hleps.Fill(p.id)
-            #print np, p.id
+            nlep += 1
+            #print np, p.id, 
             mothers=p.mothers
             for mother in mothers:
                 if 24 is abs(mother.id):
@@ -177,7 +195,7 @@ for iev in range(50000):
                     Wmothers=mother.mothers
                     for Wmother in Wmothers:
                         if 6 is abs(Wmother.id):
-                            #print "found top as mother"``
+                            #print "found top as mother"
                             #lepton
                             l=ROOT.TLorentzVector()
                             l.SetPx(p.px)
@@ -221,6 +239,8 @@ for iev in range(50000):
     if gamma1.Mag() == 0 or gamma2.Mag() == 0 or l1.Mag()==0 or l2.Mag()==0 or b1.Mag() == 0 or b2.Mag() == 0:
         continue #next event
 
+    hnleps.Fill(nlep)
+    #print l1.Pt(), l2.Pt()
     toppair = top1 + top2
     
     #print (l1-l2).Mag()
@@ -240,11 +260,6 @@ for iev in range(50000):
     l2_frame2 = ROOT.TLorentzVector(l2)
     l2_frame2.Boost(-top2.BoostVector())
     
-    b1_LabFrame = ROOT.TLorentzVector(b1)
-    b2_LabFrame = ROOT.TLorentzVector(b2)
-
-    l1_LabFrame = ROOT.TLorentzVector(l1)
-    l2_LabFrame = ROOT.TLorentzVector(l2)
 
     # if gamma1.DeltaR(gamma2) < 0.4:
     #     continue
@@ -264,31 +279,40 @@ for iev in range(50000):
     #print "l1", l1.Pt(), l1.Eta(), l1.Phi(), l1.M()
     #print "l2", l2.Pt(), l2.Eta(), l2.Phi(), l2.M()
 
-    cosl1l2 = math.cos(l1_frame1.Angle(l2_frame1.Vect()))
-    Cosl1l2.Fill(cosl1l2)
+    cosl1l2_frame1 = math.cos(l1_frame1.Angle(l2_frame1.Vect()))
+    Cosl1l2.Fill(cosl1l2_frame1)
 
     cosl1l2_frame2 = math.cos(l1_frame2.Angle(l2_frame2.Vect()))
     Cosl1l2_frame2.Fill(cosl1l2_frame2)
-    
-    Etal_LabFrame.Fill(abs(l1.Eta()-l2.Eta()))
-    Etab_LabFrame.Fill(abs(b1.Eta()-b2.Eta()))
    
-    cosl1l2_LabFrame = math.cos(l1_LabFrame.Angle(l2_LabFrame.Vect()))
-    Cosl1l2_LabFrame.Fill(cosl1l2_LabFrame)
+    etal_lab=abs(l1.Eta()-l2.Eta())
+    Etal_lab.Fill(etal_lab)
 
-    cosb1b2_LabFrame = math.cos(b1_LabFrame.Angle(b2_LabFrame.Vect()))
-    Cosb1b2_LabFrame.Fill(cosb1b2_LabFrame)
+    etab_lab = abs(b1.Eta()-b2.Eta())
+    Etab_lab.Fill(etab_lab)
+   
+    cosl1l2_lab = math.cos(l1.Angle(l2.Vect()))
+    Cosl1l2_lab.Fill(cosl1l2_lab)
 
+    cosb1b2_lab = math.cos(b1.Angle(b2.Vect()))
+    Cosb1b2_lab.Fill(cosb1b2_lab)
 
     #print cosl1l2, cosl1l2_frame2
 
-    arr_cosl1l2[0] = cosl1l2
+    arr_cosl1l2[0] = cosl1l2_lab
     arr_cosl1l2_frame2[0] = cosl1l2_frame2
 
     arr_lep1_pt_frame2[0] = l1.Pt()
     arr_lep2_pt_frame2[0] = l2.Pt()
-    outree.Fill()
 
+    arr_cosb1b2_lab[0] = cosb1b2_lab
+    arr_etal_lab[0] = etal_lab
+    arr_etab_lab[0] = etab_lab
+
+    outree.Fill()
+    
+    dilep = l1 + l2
+    arr_dilep_m[0] = dilep.M()
     nproc += 1
 out.Write()
 
