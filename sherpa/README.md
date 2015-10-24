@@ -25,13 +25,13 @@ Plot Generation
 
 1. Edit Makefile.inc to ensure the path to Sherpa and Rivet is correct.
 2. Run:
-~~~
-$ make
-~~~
+    ```
+    $ make
+    ```
 3. (Optional) To remove intermediate files run:
-~~~
-$ make clean
-~~~
+    ```
+    $ make clean
+    ```
 
 Output can be viewed in a browser by navigating to plots/index.html
 
