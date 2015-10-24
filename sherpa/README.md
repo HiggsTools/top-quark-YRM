@@ -1,14 +1,15 @@
 # Sherpa Signal & Background Validation
 
-Software
-========
+Installation
+============
 
 Install the following prerequisites:
-* rivet
-* LHAPDF
-* root
+* Rivet >2.4.0 (Including fastjet >3.0.6, HepMC >2.06.09, YODA >1.5.5): https://rivet.hepforge.org/
+* LHAPDF >6.1.5 (Optional): https://lhapdf.hepforge.org/
+* Root >6.04/06 (Optional): https://root.cern.ch/
+* OpenMPI/MPI (Optional): various
 
-Install sherpa v2.2.0 with:
+Install Sherpa >2.2.0 with (e.g.):
 ~~~
 $ svn co http://sherpa.hepforge.org/svn/branches/rel-2-2-0
 $ cd rel-2-2-0
@@ -17,6 +18,19 @@ $ make
 $ make install
 ~~~
 
+Some of the above options (e.g. Root, LHAPDF) are not required but recommended. The enable-mpi option is not required but allows Sherpa to use multiple cores/ machines.
+
+Plot Generation
+===============
+
+1. Edit Makefile.inc to ensure the path to Sherpa and Rivet is correct.
+2. Run:
+~~~
+$ make
+~~~
+
+Output can be viewed in a browser by navigating to plots/index.html
+
 Analysis
 ========
 
@@ -24,19 +38,13 @@ Our analysis is performed using rivet. We consider the tree level processes:
 * pp > t t~ (H > y y) __(Signal)__
 * pp > t t~ y y __(Background)__
 
-To alter the distributions produced edit __HIGGSTOOLS_2015_I1.cc__. 
-The default analysis produces the following distributions:
-* __TODO__
+Also included are the top decays and some (rudimentary) detector effects. Any W+/- bosons produced (by the top decay) are assumed to decay leptonically, specifically, events in which they decay to q = u, d, s, c are not simulated.
 
-Plots
+Files
 =====
 
-First edit the Makefile to ensure the path to Sherpa and Rivet is correct.
-
-Run:
-~~~
-$ make plots
-~~~
-
-Output can be viewed in a browser by navigating to  plots/index.html
-
+Description:
+* tth.dat (Sherpa run card for signal)
+* ttyy (Sherpa run card for background)
+* HIGGSTOOLS_2015.cc (Rivet analysis file)
+* plot.plot (Rivet plot settings)
