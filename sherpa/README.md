@@ -25,16 +25,20 @@ Plot Generation
 
 1. Edit Makefile.inc to ensure the path to Sherpa and Rivet is correct.
 2. Run:
-~~~
-$ make
-~~~
+..~~~
+..$ make
+..~~~
+3. (Optional) To remove intermediate files run:
+..~~
+..$ make clean
+..~~
 
 Output can be viewed in a browser by navigating to plots/index.html
 
 Analysis
 ========
 
-Our analysis is performed using rivet. We consider the tree level processes:
+Our analysis is performed using Rivet. We consider the tree level processes:
 * pp > t t~ (H > y y) __(Signal)__
 * pp > t t~ y y __(Background)__
 
@@ -45,6 +49,6 @@ Files
 
 Description:
 * tth.dat (Sherpa run card for signal)
-* ttyy (Sherpa run card for background)
+* ttyy.dat (Sherpa run card for background)
 * HIGGSTOOLS_2015.cc (Rivet analysis file)
 * plot.plot (Rivet plot settings)

@@ -5,11 +5,11 @@
 
 #include "Rivet/Analysis.hh"
 
-#include "Rivet/Jet.hh"
-
 #include "Rivet/Projections/FinalState.hh"
 #include "Rivet/Projections/IdentifiedFinalState.hh"
 #include "Rivet/Projections/UnstableFinalState.hh"
+
+#include "Rivet/Jet.hh"
 #include "Rivet/Projections/FastJets.hh"
 #include "Rivet/Projections/DressedLeptons.hh"
 #include "Rivet/Projections/ChargedLeptons.hh"
@@ -84,8 +84,8 @@ namespace Rivet {
             bool foundW_TauX=false;
             
             Particles neutrinos;
-            
-            foreach (GenParticle* p, Rivet::particles(event.genEvent())) {
+           
+            foreach (const GenParticle* p, Rivet::particles(event.genEvent())) {
                 
                 // first try to find Z->ee
                 // skip if already found Z->ee
@@ -114,8 +114,7 @@ namespace Rivet {
                             }// end conditional over electron/positrom from ME
                         }// end mother loop
                     }// end mother loop
-                }// loop over parents only to search for electron/positron from ME
-                
+                }// loop over parents only to search for electron/positron from ME              
                 if( abs(p->pdg_id())==24) {
                     // loop over childs
                     const GenVertex* dv = p->end_vertex();
@@ -131,7 +130,7 @@ namespace Rivet {
                     }
                 }// end conditional over Wdecay into Tau
             }// end loop over particles in event record
-            
+
             if(foundW_TauX){vetoEvent;}
             if(neutrinos.size()<2) {vetoEvent;}
             

@@ -1,4 +1,13 @@
 # sherpa output
+sherpa/*.hepmc2g
+sherpa/*.db
+sherpa/*.bak
+sherpa/*.so
+sherpa/*.yoda
+sherpa/MPI_Cross_Sections.dat
+sherpa/Sherpa_References.tex
+sherpa/Process
+sherpa/plots
 
 # OS X Finder Files
 .DS_Store

@@ -1,9 +1,9 @@
 (run){
-  $RUNNAME=tth
+  $RUNNAME:=tth;
   EVENTS 100;
   ERROR 0.1;
 
-  EVENT_OUTPUT=HepMC_GenEvent[$RUNNAME];
+  EVENT_OUTPUT HepMC_GenEvent[$RUNNAME];
 
   % scales
   FSF:=1.0; 
@@ -20,10 +20,10 @@
   % forbid W+/- > qq
   HARD_DECAYS On;
   HDH_STATUS[25,22,22] 2;
-  HDH_STATUS[24,2,-1]=0
-  HDH_STATUS[24,4,-3]=0
-  HDH_STATUS[-24,-2,1]=0
-  HDH_STATUS[-24,-4,3]=0
+  HDH_STATUS[24,2,-1] 0
+  HDH_STATUS[24,4,-3] 0
+  HDH_STATUS[-24,-2,1] 0
+  HDH_STATUS[-24,-4,3] 0
   HDH_BR_WEIGHTS 0;
   STABLE[24] 0;
   STABLE[6] 0;
