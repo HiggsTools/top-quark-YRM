@@ -112,7 +112,7 @@ outree.Branch("etab_lab", arr_etab_lab, "etab_lab/D")
 outree.Branch("dilep_m", arr_dilep_m, "dilep_m/D")
 print "Tree has", tree.GetEntries(), "entries"
 #for iev in range(tree.GetEntries()):
-for iev in range(min(50000, tree.GetEntries())):
+for iev in range(min(100000, tree.GetEntries())):
     if iev%10000==0:
         print "event", iev
     nb += tree.GetEntry(iev)
@@ -307,10 +307,18 @@ for iev in range(min(50000, tree.GetEntries())):
     arr_etal_lab[0] = etal_lab
     arr_etab_lab[0] = etab_lab
 
-    outree.Fill()
-    
     dilep = l1 + l2
     arr_dilep_m[0] = dilep.M()
+
+    outree.Fill()
+
+    l1=None
+    l2=None
+    gamma1=None
+    gamma2=None
+    b1=None
+    b2=None
+    
     nproc += 1
 out.Write()
 
