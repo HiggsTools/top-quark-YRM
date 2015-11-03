@@ -9,7 +9,7 @@ BACKGROUND=ttyy
 ANALYSIS = HIGGSTOOLS_2015
 
 plots: Rivet.yoda
-	rivet-mkhtml --mc-errs -c $(PLOTFILE) -o $(OUTPUT) Rivet.yoda
+	$(RIVET)-mkhtml --mc-errs -c $(PLOTFILE) -o $(OUTPUT) Rivet.yoda
 
 Rivet.yoda: $(SIGNAL).hepmc2g $(BACKGROUND).hepmc2g
 	$(RIVET)-buildplugin Rivet_$(ANALYSIS).so $(ANALYSIS).cc

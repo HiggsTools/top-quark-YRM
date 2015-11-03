@@ -1,7 +1,7 @@
 (run){
   $RUNNAME:=ttyy;
   EVENTS 100; 
-  ERROR 0.99;
+  ERROR 0.1;
 
   EVENT_OUTPUT HepMC_GenEvent[$RUNNAME];
 
@@ -15,14 +15,18 @@
 
   % decays
   % forbid W+/- > qq, q = u, d, s, c
+  % forbid W+/- > tau v
   HARD_DECAYS On;
   HDH_STATUS[24,2,-1] 0
   HDH_STATUS[24,4,-3] 0
   HDH_STATUS[-24,-2,1] 0
   HDH_STATUS[-24,-4,3] 0
+  HDH_STATUS[24,16,-15] 0
+  HDH_STATUS[-24,-16,15] 0
+
+  WIDTH[6] 0;
   STABLE[24] 0;
   STABLE[6] 0;
-  WIDTH[6] 0;
 
   % collider setup
   BEAM_1 2212; BEAM_ENERGY_1 7000;

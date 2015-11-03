@@ -12,22 +12,26 @@
   SCALES STRICT_METS{FSF*MU_F2}{RSF*MU_R2}{QSF*MU_Q2};
 
   MODEL HEFT;
-  MASS[25] 125.;
-  WIDTH[25] 0.;
 
   % decays
   % h > yy
   % forbid W+/- > qq
+  % forbid W+/- > tau v
   HARD_DECAYS On;
   HDH_STATUS[25,22,22] 2;
   HDH_STATUS[24,2,-1] 0
   HDH_STATUS[24,4,-3] 0
   HDH_STATUS[-24,-2,1] 0
   HDH_STATUS[-24,-4,3] 0
+  HDH_STATUS[24,16,-15] 0
+  HDH_STATUS[-24,-16,15] 0
   HDH_BR_WEIGHTS 0;
+  
+  MASS[25] 125.;
+  WIDTH[25] 0.;
+  WIDTH[6] 0;
   STABLE[24] 0;
   STABLE[6] 0;
-  WIDTH[6] 0;
 
   % collider setup
   BEAM_1 2212; BEAM_ENERGY_1 7000;
